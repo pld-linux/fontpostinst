@@ -61,7 +61,7 @@ else
 fi
 
 umask 022
-cd "$FDIR" || exit $?
+cd "$FDIR" || exit 0
 if [ "`echo fonts.alias.*`" != 'fonts.alias.*' ]; then
 	cat fonts.alias.* | LC_ALL=C sort -u > fonts.alias
 elif [ -f fonts.alias ]; then
@@ -156,3 +156,4 @@ EOF
 		$MKFONTDIR
 	fi
 esac
+exit 0
