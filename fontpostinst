@@ -7,6 +7,7 @@
 #	mkfontdir, mkfontscale (XFree86)  (or ttmkfdir - for TTF only)
 #	fc-cache (fontconfig or XFree86-fontconfig)
 #	gnome-font-install (gnome-print)
+#	t1libconfig (t1lib)
 
 FBASEDIR="/usr/share/fonts"
 
@@ -17,7 +18,7 @@ MKFONTSCALE="$MKFONTSCALEBIN"
 
 MKTTFFONTSCALEBIN="$MKFONTSCALEBIN"
 MKTTFFONTSCALE="$MKTTFFONTSCALEBIN"
-if [ ! -x "$MKFONTSCALEBIN" -a -f /usr/bin/ttmkfdir ]; then
+if [ ! -x "$MKFONTSCALEBIN" -a -x /usr/bin/ttmkfdir ]; then
 	# fallback for X <= 4.2.x
 	MKTTFFONTSCALEBIN="/usr/bin/ttmkfdir"
 	MKTTFFONTSCALE="$MKFONTSCALEBIN -e /usr/share/fonts/encodings/encodings.dir"
@@ -40,6 +41,9 @@ if [ ! -x $GNOMEFONTINSTBIN -a -x /usr/X11R6/bin/gnome-font-install ]; then
 	GNOMEFONTINSTBIN="/usr/X11R6/bin/gnome-font-install"
 fi
 GNOMEFONTINST="$GNOMEFONTINSTBIN --target $FBASEDIR/fontmap"
+
+T1LIBCONFIGBIN="/usr/bin/t1libconfig"
+T1LIBCONFIG="$T1LIBCONFIGBIN --force"
 
 if [ -z "$1" ]; then
 	echo "Usage: fontpostinst TYPE [DIR]"
@@ -103,6 +107,9 @@ case "$FTYPE" in
 	fi
 	if [ -x $GNOMEFONTINSTBIN ]; then
 		$GNOMEFONTINST
+	fi
+	if [ -x $T1LIBCONFIGBIN ]; then
+		$T1LIBCONFIG
 	fi
 	;;
     CID|Speedo)
