@@ -102,6 +102,18 @@ case "$FTYPE" in
 		$GNOMEFONTINST
 	fi
 	;;
+    CID|Speedo)
+	if "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
+		cat fonts.scale.* 2>/dev/null | LC_ALL=C sort -u > fonts.scale.tmp
+		cat fonts.scale.tmp | wc -l | tr -d ' ' > fonts.scale
+		cat fonts.scale.tmp >> fonts.scale
+		rm -f fonts.scale.tmp
+	elif [ -f fonts.scale ]; then
+		mv -f fonts.scale fonts.scale-save
+	fi
+	if [ -x $MKFONTDIRBIN ]; then
+		$MKFONTDIR
+	fi
     misc)
 	# special case - fonts needed for X server to start
 	if [ -x $MKFONTDIRBIN ]; then
@@ -114,10 +126,12 @@ cursor.pcf.gz cursor
 EOF
 	fi
 	;;
-    100dpi|75dpi|CID|Speedo|PEX)
+    100dpi|75dpi|cyrillic)
 	if [ -x $MKFONTDIRBIN ]; then
 		$MKFONTDIR
 	fi
+	;;
+    PEX)
 	;;
     *)
 	echo "Warning: \"$FTYPE\": unknown font type!" >&2
