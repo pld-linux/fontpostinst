@@ -1,9 +1,11 @@
 #!/bin/sh
 
+# $Id$
+
 # Requires: /bin/sh textutils fileutils
 # optionally:
 #	mkfontdir, mkfontscale (XFree86)  (or ttmkfdir - for TTF only)
-#	fc-cache (XFree86-fontconfig)
+#	fc-cache (fontconfig or XFree86-fontconfig)
 #	gnome-font-install (gnome-print)
 
 FBASEDIR="/usr/share/fonts"
@@ -21,7 +23,11 @@ if [ ! -x "$MKFONTSCALEBIN" -a -f /usr/bin/ttmkfdir ]; then
 	MKTTFFONTSCALE="$MKFONTSCALEBIN -e /usr/share/fonts/encodings/encodings.dir"
 fi
 
-FCCACHEBIN="/usr/X11R6/bin/fc-cache"
+FCCACHEBIN="/usr/bin/fc-cache"
+if [ ! -x $FCCACHEBIN -a -x /usr/X11R6/bin/fc-cache ]; then
+	# use XFree86-fontconfig
+	FCCACHEBIN="/usr/X11R6/bin/fc-cache"
+fi
 if [ ! -x $FCCACHEBIN -a -x /usr/X11R6/bin/xftcache ]; then
 	# fallback for XFree86 4.[0-2]
 	FCCACHEBIN="/usr/X11R6/bin/xftcache"
@@ -42,7 +48,7 @@ if [ -z "$1" ]; then
 	echo "  default DIR is $FBASEDIR/TYPE"
 	exit 1
 fi
-	
+
 FTYPE="$1"
 if [ -z "$2" ]; then
 	FDIR="$FBASEDIR/$FTYPE"
@@ -67,8 +73,6 @@ case "$FTYPE" in
 	fi
 	if [ -x $FCCACHEBIN ]; then
 		$FCCACHE
-	elif [ -x $XFTCACHEBIN ]; then
-		$XFTCACHE
 	fi
 	;;
     Type1)
@@ -91,8 +95,6 @@ case "$FTYPE" in
 	fi
 	if [ -x $FCCACHEBIN ]; then
 		$FCCACHE
-	elif [ -x $XFTCACHEBIN ]; then
-		$XFTCACHE
 	fi
 	if [ "`echo Fontmap.*`" != 'Fontmap.*' ]; then
 		cat Fontmap.* > Fontmap
@@ -127,10 +129,16 @@ case "$FTYPE" in
 cursor.pcf.gz cursor
 EOF
 	fi
+	if [ -x $FCCACHEBIN ]; then
+		$FCCACHE
+	fi
 	;;
     100dpi|75dpi|cyrillic|local)
 	if [ -x $MKFONTDIRBIN ]; then
 		$MKFONTDIR
+	fi
+	if [ -x $FCCACHEBIN ]; then
+		$FCCACHE
 	fi
 	;;
     PEX)
