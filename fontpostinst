@@ -15,8 +15,11 @@ MKFONTSCALE="$MKFONTSCALEBIN"
 
 MKTTFFONTSCALEBIN="$MKFONTSCALEBIN"
 MKTTFFONTSCALE="$MKTTFFONTSCALEBIN"
-#MKTTFFONTSCALEBIN="/usr/bin/ttmkfdir"
-#MKTTFFONTSCALE="$MKFONTSCALEBIN -e /usr/share/fonts/encodings/encodings.dir"
+if [ ! -x "$MKFONTSCALEBIN" -a -f /usr/bin/ttmkfdir ]; then
+	# fallback for X <= 4.2.x
+	MKTTFFONTSCALEBIN="/usr/bin/ttmkfdir"
+	MKTTFFONTSCALE="$MKFONTSCALEBIN -e /usr/share/fonts/encodings/encodings.dir"
+fi
 
 FCCACHEBIN="/usr/X11R6/bin/fc-cache"
 if [ ! -x $FCCACHEBIN -a -x /usr/X11R6/bin/xftcache ]; then
@@ -50,8 +53,8 @@ umask 022
 cd "$FDIR"
 if [ "`echo fonts.alias.*`" != 'fonts.alias.*' ]; then
 	cat fonts.alias.* | LC_ALL=C sort -u > fonts.alias
-else
-	rm -f fonts.alias
+elif [ -f fonts.alias ]; then
+	mv -f fonts.alias fonts.alias-save
 fi
 case "$FTYPE" in
     OTF|TTF)
@@ -79,8 +82,8 @@ case "$FTYPE" in
 		if [ -x $MKFONTSCALEBIN ]; then
 			$MKFONTSCALE
 		fi
-	else
-		rm -f fonts.scale
+	elif [ -f fonts.scale ]; then
+		mv -f fonts.scale fonts.scale-save
 	fi
 	if [ -x $MKFONTDIRBIN ]; then
 		$MKFONTDIR
@@ -92,8 +95,8 @@ case "$FTYPE" in
 	fi
 	if "`echo Fontmap.*`" != 'Fontmap.*' ]; then
 		cat Fontmap.* > Fontmap
-	else
-		rm -f Fontmap
+	elif [ -f Fontmap ]; then
+		mv -f Fontmap Fontmap-save
 	fi
 	if [ -x $GNOMEFONTINSTBIN ]; then
 		$GNOMEFONTINST
