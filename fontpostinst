@@ -37,7 +37,8 @@ GNOMEFONTINST="$GNOMEFONTINSTBIN --target $FBASEDIR/fontmap"
 
 if [ -z "$1" ]; then
 	echo "Usage: fontpostinst TYPE [DIR]"
-	echo "  TYPE is one of OTF, TTF, Type1, misc, 100dpi, 75dpi, CID, Speedo, PEX"
+	echo "  TYPE is one of:"
+	echo "    OTF, TTF, Type1, misc, 100dpi, 75dpi, cyrillic, local, CID, Speedo, PEX"
 	echo "  default DIR is $FBASEDIR/TYPE"
 	exit 1
 fi
@@ -127,7 +128,7 @@ cursor.pcf.gz cursor
 EOF
 	fi
 	;;
-    100dpi|75dpi|cyrillic)
+    100dpi|75dpi|cyrillic|local)
 	if [ -x $MKFONTDIRBIN ]; then
 		$MKFONTDIR
 	fi
