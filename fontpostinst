@@ -1,0 +1,124 @@
+#!/bin/sh
+
+# Requires: /bin/sh textutils fileutils
+# optionally:
+#	mkfontdir, mkfontscale (XFree86)  (or ttmkfdir - for TTF only)
+#	fc-cache (XFree86-fontconfig)
+#	gnome-font-install (gnome-print)
+
+FBASEDIR="/usr/share/fonts"
+
+MKFONTDIRBIN="/usr/X11R6/bin/mkfontdir"
+MKFONTDIR="$MKFONTDIRBIN"
+MKFONTSCALEBIN="/usr/X11R6/bin/mkfontscale"
+MKFONTSCALE="$MKFONTSCALEBIN"
+
+MKTTFFONTSCALEBIN="$MKFONTSCALEBIN"
+MKTTFFONTSCALE="$MKTTFFONTSCALEBIN"
+#MKTTFFONTSCALEBIN="/usr/bin/ttmkfdir"
+#MKTTFFONTSCALE="$MKFONTSCALEBIN -e /usr/share/fonts/encodings/encodings.dir"
+
+FCCACHEBIN="/usr/X11R6/bin/fc-cache"
+if [ ! -x $FCCACHEBIN -a -x /usr/X11R6/bin/xftcache ]; then
+	# fallback for XFree86 4.[0-2]
+	FCCACHEBIN="/usr/X11R6/bin/xftcache"
+fi
+FCCACHE="$FCCACHEBIN ."
+
+GNOMEFONTINSTBIN="/usr/bin/gnome-font-install"
+if [ ! -x $GNOMEFONTINSTBIN -a -x /usr/X11R6/bin/gnome-font-install ]; then
+	# fallback for Ra
+	GNOMEFONTINSTBIN="/usr/X11R6/bin/gnome-font-install"
+fi
+GNOMEFONTINST="$GNOMEFONTINSTBIN --target $FBASEDIR/fontmap"
+
+if [ -z "$1" ]; then
+	echo "Usage: fontpostinst TYPE [DIR]"
+	echo "  TYPE is one of OTF, TTF, Type1, misc, 100dpi, 75dpi, CID, Speedo, PEX"
+	echo "  default DIR is $FBASEDIR/TYPE"
+	exit 1
+fi
+	
+FTYPE="$1"
+if [ -z "$2" ]; then
+	FDIR="$FBASEDIR/$FTYPE"
+else
+	FDIR="$2"
+fi
+
+umask 022
+cd "$FDIR"
+if [ "`echo fonts.alias.*`" != 'fonts.alias.*' ]; then
+	cat fonts.alias.* | LC_ALL=C sort -u > fonts.alias
+else
+	rm -f fonts.alias
+fi
+case "$FTYPE" in
+    OTF|TTF)
+	if [ -x $MKTTFFONTSCALEBIN ]; then
+		$MKTTFFONTSCALE
+	fi
+	if [ -x $MKFONTDIRBIN ]; then
+		$MKFONTDIR
+	fi
+	if [ -x $FCCACHEBIN ]; then
+		$FCCACHE
+	elif [ -x $XFTCACHEBIN ]; then
+		$XFTCACHE
+	fi
+	;;
+    Type1)
+	rm -f fonts.scale.bak Fontmap.bak
+	if "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
+		cat fonts.scale.* 2>/dev/null | LC_ALL=C sort -u > fonts.scale.tmp
+		cat fonts.scale.tmp | wc -l | tr -d ' ' > fonts.scale
+		cat fonts.scale.tmp >> fonts.scale
+		rm -f fonts.scale.tmp
+	else if [ "`echo *.pf[ab]`" != '*.pf[ab]' ]; then
+		# no hints - try to generate
+		if [ -x $MKFONTSCALEBIN ]; then
+			$MKFONTSCALE
+		fi
+	else
+		rm -f fonts.scale
+	fi
+	if [ -x $MKFONTDIRBIN ]; then
+		$MKFONTDIR
+	fi
+	if [ -x $FCCACHEBIN ]; then
+		$FCCACHE
+	elif [ -x $XFTCACHEBIN ]; then
+		$XFTCACHE
+	fi
+	if "`echo Fontmap.*`" != 'Fontmap.*' ]; then
+		cat Fontmap.* > Fontmap
+	else
+		rm -f Fontmap
+	fi
+	if [ -x $GNOMEFONTINSTBIN ]; then
+		$GNOMEFONTINST
+	fi
+	;;
+    misc)
+	# special case - fonts needed for X server to start
+	if [ -x $MKFONTDIRBIN ]; then
+		$MKFONTDIR
+	elif [ -f 6x13-ISO8859-1.pcf.gz -a -f cursor.pcf.gz ]; then
+		cat > fonts.dir <<EOF
+2
+6x13-ISO8859-1.pcf.gz -misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso8859-1
+cursor.pcf.gz cursor
+EOF
+	fi
+	;;
+    100dpi|75dpi|CID|Speedo|PEX)
+	if [ -x $MKFONTDIRBIN ]; then
+		$MKFONTDIR
+	fi
+	;;
+    *)
+	echo "Warning: \"$FTYPE\": unknown font type!" >&2
+	if [ -x $MKFONTDIRBIN ]; then
+		$MKFONTDIR
+	fi
+esac
