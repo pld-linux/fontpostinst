@@ -72,12 +72,12 @@ case "$FTYPE" in
 	;;
     Type1)
 	rm -f fonts.scale.bak Fontmap.bak
-	if "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
+	if [ "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
 		cat fonts.scale.* 2>/dev/null | LC_ALL=C sort -u > fonts.scale.tmp
 		cat fonts.scale.tmp | wc -l | tr -d ' ' > fonts.scale
 		cat fonts.scale.tmp >> fonts.scale
 		rm -f fonts.scale.tmp
-	else if [ "`echo *.pf[ab]`" != '*.pf[ab]' ]; then
+	elif [ "`echo *.pf[ab]`" != '*.pf[ab]' ]; then
 		# no hints - try to generate
 		if [ -x $MKFONTSCALEBIN ]; then
 			$MKFONTSCALE
@@ -93,7 +93,7 @@ case "$FTYPE" in
 	elif [ -x $XFTCACHEBIN ]; then
 		$XFTCACHE
 	fi
-	if "`echo Fontmap.*`" != 'Fontmap.*' ]; then
+	if [ "`echo Fontmap.*`" != 'Fontmap.*' ]; then
 		cat Fontmap.* > Fontmap
 	elif [ -f Fontmap ]; then
 		mv -f Fontmap Fontmap-save
@@ -103,7 +103,7 @@ case "$FTYPE" in
 	fi
 	;;
     CID|Speedo)
-	if "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
+	if [ "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
 		cat fonts.scale.* 2>/dev/null | LC_ALL=C sort -u > fonts.scale.tmp
 		cat fonts.scale.tmp | wc -l | tr -d ' ' > fonts.scale
 		cat fonts.scale.tmp >> fonts.scale
@@ -114,6 +114,7 @@ case "$FTYPE" in
 	if [ -x $MKFONTDIRBIN ]; then
 		$MKFONTDIR
 	fi
+	;;
     misc)
 	# special case - fonts needed for X server to start
 	if [ -x $MKFONTDIRBIN ]; then

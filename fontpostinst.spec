@@ -2,12 +2,13 @@ Summary:	Font post (un)installation script
 Summary(pl):	Skrypt po(de)instalacyjny dla fontów
 Name:		fontpostinst
 Version:	0.1
-Release:	2
+Release:	3
 License:	Free
 Group:		Applications/System
 Source0:	%{name}
 Requires:	fileutils
 Requires:	textutils
+BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
