@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# TODO:
+# Generating Fontmap for TTF fonts: http://docs.scribus.net/index.php?lang=en&page=gsfont
+
 # $Id$
 
 # Requires: /bin/sh textutils fileutils
