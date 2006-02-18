@@ -143,7 +143,7 @@ EOF
 		$FCCACHE
 	fi
 	;;
-    100dpi|75dpi|cyrillic|local|util)
+    100dpi|75dpi|cyrillic|local)
 	if [ -x $MKFONTDIRBIN ]; then
 		$MKFONTDIR
 	fi
