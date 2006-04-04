@@ -14,11 +14,16 @@
 
 FBASEDIR="/usr/share/fonts"
 
-MKFONTDIRBIN="/usr/X11R6/bin/mkfontdir"
+MKFONTDIRBIN="/usr/bin/mkfontdir"
 MKFONTDIR="$MKFONTDIRBIN"
-MKFONTSCALEBIN="/usr/X11R6/bin/mkfontscale"
+if [ ! -x "$MKFONTDIRBIN" -a -x /usr/X11R6/bin/mkfontdir ]; then
+	MKFONTDIR="/usr/X11R6/bin/mkfontdir"
+fi
+MKFONTSCALEBIN="/usr/bin/mkfontscale"
 MKFONTSCALE="$MKFONTSCALEBIN"
-
+if [ ! -x "$MKFONTSCALEBIN" -a -x /usr/X11R6/bin/mkfontscale ]; then
+	MKFONTSCALEBIN="/usr/X11R6/bin/mkfontscale"
+fi
 MKTTFFONTSCALEBIN="$MKFONTSCALEBIN"
 MKTTFFONTSCALE="$MKTTFFONTSCALEBIN"
 if [ ! -x "$MKFONTSCALEBIN" -a -x /usr/bin/ttmkfdir ]; then
