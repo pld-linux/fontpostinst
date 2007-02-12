@@ -1,5 +1,5 @@
 Summary:	Font post (un)installation script
-Summary(pl):	Skrypt po(de)instalacyjny dla fontów
+Summary(pl.UTF-8):   Skrypt po(de)instalacyjny dla fontÃ³w
 Name:		fontpostinst
 Version:	0.1
 Release:	11
@@ -17,9 +17,9 @@ It supports regeneration of XFree86 fonts.alias, fonts.scale,
 fonts.dir files, gnome-font catalogs, ghostscript Fontmaps,
 fontconfig/xft cache and t1lib FontDatabase.
 
-%description -l pl
-Skrypt do wywo³ywania po ka¿dym instalowaniu lub odinstalowaniu
-fontów. Potrafi regenerowaæ pliki fonts.alias, fonts.scale i fonts.dir
+%description -l pl.UTF-8
+Skrypt do wywoÅ‚ywania po kaÅ¼dym instalowaniu lub odinstalowaniu
+fontÃ³w. Potrafi regenerowaÄ‡ pliki fonts.alias, fonts.scale i fonts.dir
 XFree86, katalogi gnome-font, pliki Fontmap ghostscripta, cache
 fontconfig/xft oraz plik FontDatabase t1lib.
 
