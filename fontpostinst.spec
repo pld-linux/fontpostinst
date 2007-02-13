@@ -1,5 +1,5 @@
 Summary:	Font post (un)installation script
-Summary(pl.UTF-8):   Skrypt po(de)instalacyjny dla fontów
+Summary(pl.UTF-8):	Skrypt po(de)instalacyjny dla fontów
 Name:		fontpostinst
 Version:	0.1
 Release:	11
