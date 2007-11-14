@@ -2,7 +2,7 @@ Summary:	Font post (un)installation script
 Summary(pl.UTF-8):	Skrypt po(de)instalacyjny dla fontów
 Name:		fontpostinst
 Version:	0.1
-Release:	13
+Release:	14
 License:	Free
 Group:		Applications/System
 Source0:	%{name}
