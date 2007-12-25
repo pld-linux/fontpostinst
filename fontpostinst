@@ -12,7 +12,7 @@
 #	gnome-font-install (gnome-print)
 #	t1libconfig (t1lib)
 
-PROGRAM="${0##*/}"
+PROGRAM=${0##*/}
 
 FBASEDIR="/usr/share/fonts"
 
