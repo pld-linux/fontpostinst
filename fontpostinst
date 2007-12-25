@@ -12,7 +12,7 @@
 #	gnome-font-install (gnome-print)
 #	t1libconfig (t1lib)
 
-PROGRAM=${0##*/}
+PROGRAM="${0##*/}"
 
 FBASEDIR="/usr/share/fonts"
 
@@ -63,6 +63,18 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
+VERBOSE=0
+if [ "$1" = "-v" ]; then
+	VERBOSE=1
+	shift
+fi
+
+verb() {
+	if [ "$VERBOSE" = "1" ]; then
+		echo >&2 "$1"
+	fi
+}
+
 FTYPE="$1"
 if [ -z "$2" ]; then
 	FDIR="$FBASEDIR/$FTYPE"
@@ -77,26 +89,26 @@ if [ "`echo fonts.alias.*`" != 'fonts.alias.*' ]; then
 elif [ -f fonts.alias ]; then
 	mv -f fonts.alias fonts.alias-save
 fi
-echo >&2 "$PROGRAM: Updating for $FTYPE..."
+verb "$PROGRAM: Updating for $FTYPE..."
 case "$FTYPE" in
     OTF|TTF)
 	if [ -x $MKTTFFONTSCALEBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKTTFFONTSCALEBIN."
+		verb "$PROGRAM: Running $MKTTFFONTSCALEBIN."
 		$MKTTFFONTSCALE
 	fi
 	if [ -x $MKFONTDIRBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKFONTDIRBIN."
+		verb "$PROGRAM: Running $MKFONTDIRBIN."
 		$MKFONTDIR
 	fi
 	if [ -x $FCCACHEBIN ]; then
-		echo >&2 "$PROGRAM: Running $FCCACHEBIN."
+		verb "$PROGRAM: Running $FCCACHEBIN."
 		$FCCACHE
 	fi
 	;;
     Type1)
 	rm -f fonts.scale.bak Fontmap.bak
 	if [ "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
-		echo >&2 "$PROGRAM: Merging fonts.scale.* files."
+		verb "$PROGRAM: Merging fonts.scale.* files."
 		cat fonts.scale.* 2>/dev/null | LC_ALL=C sort -u > fonts.scale.tmp
 		cat fonts.scale.tmp | wc -l | tr -d ' ' > fonts.scale
 		cat fonts.scale.tmp >> fonts.scale
@@ -104,38 +116,38 @@ case "$FTYPE" in
 	elif [ "`echo *.pf[ab]`" != '*.pf[ab]' ]; then
 		# no hints - try to generate
 		if [ -x $MKFONTSCALEBIN ]; then
-			echo >&2 "$PROGRAM: Running $MKFONTSCALEBIN."
+			verb "$PROGRAM: Running $MKFONTSCALEBIN."
 			$MKFONTSCALE
 		fi
 	elif [ -f fonts.scale ]; then
 		mv -f fonts.scale fonts.scale-save
 	fi
 	if [ -x $MKFONTDIRBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKFONTDIRBIN."
+		verb "$PROGRAM: Running $MKFONTDIRBIN."
 		$MKFONTDIR
 	fi
 	if [ -x $FCCACHEBIN ]; then
-		echo >&2 "$PROGRAM: Running $FCCACHEBIN."
+		verb "$PROGRAM: Running $FCCACHEBIN."
 		$FCCACHE
 	fi
 	if [ "`echo Fontmap.*`" != 'Fontmap.*' ]; then
-		echo >&2 "$PROGRAM: Merging Fontmap.* files."
+		verb "$PROGRAM: Merging Fontmap.* files."
 		cat Fontmap.* > Fontmap
 	elif [ -f Fontmap ]; then
 		mv -f Fontmap Fontmap-save
 	fi
 	if [ -x $GNOMEFONTINSTBIN ]; then
-		echo >&2 "$PROGRAM: Running $GNOMEFONTINSTBIN."
+		verb "$PROGRAM: Running $GNOMEFONTINSTBIN."
 		$GNOMEFONTINST
 	fi
 	if [ -x $T1LIBCONFIGBIN ]; then
-		echo >&2 "$PROGRAM: Running $T1LIBCONFIGBIN."
+		verb "$PROGRAM: Running $T1LIBCONFIGBIN."
 		$T1LIBCONFIG
 	fi
 	;;
     CID|Speedo)
 	if [ "`echo fonts.scale.*`" != 'fonts.scale.*' ]; then
-		echo >&2 "$PROGRAM: Merging fonts.scale.* files."
+		verb "$PROGRAM: Merging fonts.scale.* files."
 		cat fonts.scale.* 2>/dev/null | LC_ALL=C sort -u > fonts.scale.tmp
 		cat fonts.scale.tmp | wc -l | tr -d ' ' > fonts.scale
 		cat fonts.scale.tmp >> fonts.scale
@@ -144,14 +156,14 @@ case "$FTYPE" in
 		mv -f fonts.scale fonts.scale-save
 	fi
 	if [ -x $MKFONTDIRBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKFONTDIRBIN."
+		verb "$PROGRAM: Running $MKFONTDIRBIN."
 		$MKFONTDIR
 	fi
 	;;
     misc)
 	# special case - fonts needed for X server to start
 	if [ -x $MKFONTDIRBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKFONTDIRBIN."
+		verb "$PROGRAM: Running $MKFONTDIRBIN."
 		$MKFONTDIR
 	elif [ -f 6x13-ISO8859-1.pcf.gz -a -f cursor.pcf.gz ]; then
 		cat > fonts.dir <<EOF
@@ -161,26 +173,26 @@ cursor.pcf.gz cursor
 EOF
 	fi
 	if [ -x $FCCACHEBIN ]; then
-		echo >&2 "$PROGRAM: Running $FCCACHEBIN."
+		verb "$PROGRAM: Running $FCCACHEBIN."
 		$FCCACHE
 	fi
 	;;
     100dpi|75dpi|cyrillic|local)
 	if [ -x $MKFONTDIRBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKFONTDIRBIN."
+		verb "$PROGRAM: Running $MKFONTDIRBIN."
 		$MKFONTDIR
 	fi
 	if [ -x $FCCACHEBIN ]; then
-		echo >&2 "$PROGRAM: Running $FCCACHEBIN."
+		verb "$PROGRAM: Running $FCCACHEBIN."
 		$FCCACHE
 	fi
 	;;
     PEX)
 	;;
     *)
-	echo "Warning: \"$FTYPE\": unknown font type!" >&2
+	echo >&2 "Warning: \"$FTYPE\": unknown font type!" >&2
 	if [ -x $MKFONTDIRBIN ]; then
-		echo >&2 "$PROGRAM: Running $MKFONTDIRBIN."
+		verb "$PROGRAM: Running $MKFONTDIRBIN."
 		$MKFONTDIR
 	fi
 esac
