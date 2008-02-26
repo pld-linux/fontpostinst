@@ -8,6 +8,9 @@ Group:		Applications/System
 Source0:	%{name}
 Requires:	fileutils
 Requires:	textutils
+Suggests:	fontconfig
+Suggests:	t1lib
+Suggests:	xorg-app-mkfontdir
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
